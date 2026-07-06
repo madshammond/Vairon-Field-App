@@ -367,19 +367,28 @@ async function send(){
     if(!confirm("You've marked Bunnings/other materials but attached no receipt. Send anyway?"))return;
   }
   const tag=d.veq||"NOVEQ";
-  const jfile=new File([JSON.stringify(d,null,1)],`JOBCARD ${tag} ${d.date} ${d.tech}.json`,{type:"application/json"});
   const ext=f=>f.name.slice(f.name.lastIndexOf('.'))||'.jpg';
-  const files=[jfile,
+  const files=[
    ...before.map((f,i)=>new File([f],`${tag}_${d.date}_BEFORE${i+1}${ext(f)}`,{type:f.type})),
    ...after.map((f,i)=>new File([f],`${tag}_${d.date}_AFTER${i+1}${ext(f)}`,{type:f.type})),
    ...receipts.map((f,i)=>new File([f],`${tag}_${d.date}_RECEIPT${i+1}${ext(f)}`,{type:f.type}))];
-  const text=summary();
-  if(navigator.canShare&&navigator.canShare({files})){
-    try{await navigator.share({title:"Vairon job card",text,files});done();return;}
+  const text="TO: admin@vaironelectrics.com.au\nSUBJECT: JOB CARD "+tag+" "+d.date+"\n\n"+summary()
+    +"\n\n----- JOBCARD DATA — do not edit below this line -----\n"+JSON.stringify(d);
+  // try share with photos attached
+  if(files.length&&navigator.canShare&&navigator.canShare({files})){
+    try{await navigator.share({title:"JOB CARD "+tag,text,files});done();return;}
     catch(e){if(e.name==="AbortError")return;}
   }
-  const a=document.createElement("a");a.href=URL.createObjectURL(jfile);a.download=jfile.name;a.click();
-  location.href="mailto:admin@vaironelectrics.com.au?subject="+encodeURIComponent("JOB CARD "+tag+" "+d.date)+"&body="+encodeURIComponent(text+"\n\n(Attach the downloaded job-card file + photos/receipts before sending)");
+  // no photos, or file-share unsupported: share text alone
+  if(navigator.share){
+    try{await navigator.share({title:"JOB CARD "+tag,text});
+      if(files.length)alert("Photos couldn't attach automatically on this phone — add them to the email from your camera roll before sending.");
+      done();return;}
+    catch(e){if(e.name==="AbortError")return;}
+  }
+  // last resort: open email directly
+  location.href="mailto:admin@vaironelectrics.com.au?subject="+encodeURIComponent("JOB CARD "+tag+" "+d.date)+"&body="+encodeURIComponent(text);
+  if(files.length)alert("Attach your photos to the email from your camera roll before sending.");
   done();
 }
 function done(){
