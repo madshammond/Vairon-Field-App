@@ -54,6 +54,14 @@ textarea{min-height:70px}
 .job .addr{font-size:15px;font-weight:700;margin:4px 0 2px}
 .job .meta{font-size:12px;color:var(--dg)}
 #blankBtn{display:block;margin:14px 10px;background:var(--navy2);color:#fff;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:700;width:calc(100% - 20px)}
+.hometab{flex:1;padding:12px;border:none;border-radius:10px;background:#fff;color:var(--dg);font-size:14px;font-weight:700;box-shadow:0 1px 4px rgba(15,25,35,.08)}
+.hometab.on{background:var(--blue);color:#fff}
+.dayhdr{margin:14px 12px 4px;font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.8px}
+.sjob{background:#fff;margin:6px 10px;border-radius:10px;padding:10px 12px;box-shadow:0 1px 3px rgba(15,25,35,.07);border-left:4px solid var(--mg)}
+.sjob.mine{border-left-color:#27ae60}
+.sjob .t{font-size:11px;font-weight:700;color:var(--blue)}
+.sjob .a{font-size:14px;font-weight:700;margin:2px 0}
+.sjob .m{font-size:11.5px;color:var(--dg)}
 .syncnote{text-align:center;font-size:10.5px;color:#95a3b1;margin:6px 0 20px}
 </style>
 </head>
@@ -62,7 +70,15 @@ textarea{min-height:70px}
 
 <!-- ============ HOME ============ -->
 <div id="home">
+  <div style="display:flex;gap:8px;margin:10px 10px 0">
+    <button class="hometab on" id="tab_jobs" onclick="homeTab('jobs')">📋 Job cards</button>
+    <button class="hometab" id="tab_sched" onclick="homeTab('sched')">📅 My schedule</button>
+  </div>
   <div id="jobList"></div>
+  <div id="schedView" style="display:none">
+    <div class="chips" id="schedTech" style="margin:10px 10px 0"></div>
+    <div id="schedList"></div>
+  </div>
   <button id="blankBtn" onclick="openJob(null)">＋ Blank job card (unscheduled / make-safe)</button>
   <div class="syncnote" id="syncNote"></div>
 </div>
@@ -197,6 +213,39 @@ function openJob(j){
 function goHome(){
   $("home").style.display="block";$("form").style.display="none";$("submitBar").style.display="none";
   $("backBtn").style.display="none";$("hdrNote").textContent="pick your job";
+}
+function homeTab(t){
+  document.getElementById("tab_jobs").classList.toggle("on",t==="jobs");
+  document.getElementById("tab_sched").classList.toggle("on",t==="sched");
+  $("jobList").style.display=t==="jobs"?"block":"none";
+  $("blankBtn").style.display=t==="jobs"?"block":"none";
+  $("schedView").style.display=t==="sched"?"block":"none";
+  if(t==="sched")drawSched();
+}
+let schedWho=localStorage.getItem("vf_tech")||"All crew";
+function drawSched(){
+  const tc=$("schedTech");tc.innerHTML="";
+  ["All crew",...TECHS].forEach(v=>{const d=document.createElement("div");d.className="chip"+(v===schedWho?" on":"");d.textContent=v;
+    d.onclick=()=>{schedWho=v;drawSched();};tc.appendChild(d);});
+  const el=$("schedList");el.innerHTML="";
+  const today=new Date().toISOString().slice(0,10);
+  let lastDay="";
+  const shown=JOBS.filter(j=>schedWho==="All crew"||j.crew.includes(schedWho)||j.crew.includes("TBC"));
+  if(!shown.length){el.innerHTML='<div class="note" style="margin:14px">Nothing booked for '+schedWho+' this week.</div>';return;}
+  shown.forEach(j=>{
+    if(j.d!==lastDay){lastDay=j.d;
+      const h=document.createElement("div");h.className="dayhdr";
+      h.textContent=j.when.split("·")[0].trim()+(j.d===today?"  —  TODAY":"");el.appendChild(h);}
+    const mine=schedWho!=="All crew"&&j.crew.includes(schedWho);
+    const d=document.createElement("div");d.className="sjob"+(mine?" mine":"");
+    d.innerHTML=`<div class="t">${(j.when.split("·")[1]||"").trim()}  ${j.veq?"· "+j.veq:""}</div>
+      <div class="a">${j.addr}</div>
+      <div class="m">${j.client}</div>
+      <div class="m">👷 ${j.crew} — ${j.scope.slice(0,110)}${j.scope.length>110?"…":""}</div>`;
+    d.onclick=()=>openJob(j);
+    el.appendChild(d);
+  });
+  const n=document.createElement("div");n.className="syncnote";n.textContent="Tap a job to start its job card · synced "+JOBS_SYNCED;el.appendChild(n);
 }
 /* ---------- chips ---------- */
 function chips(el,arr,cur,cb){el.innerHTML="";arr.forEach(v=>{const d=document.createElement("div");d.className="chip"+(v===cur?" on":"");d.textContent=v;d.onclick=()=>cb(v);el.appendChild(d);});}
