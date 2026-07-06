@@ -392,9 +392,9 @@ async function send(){
   done();
 }
 function done(){
+  localStorage.removeItem("vf_draft"); // sent = draft gone, always
   toast("Job card sent ✅");
   if(confirm("Clear the form for the next job?")){
-    localStorage.removeItem("vf_draft");
     chosen=[];needs=[];equip=[];before=[];after=[];receipts=[];status="";ces="";
     ["veq","addr","client","scope","workdesc","further","travel","tstart","tfin"].forEach(id=>$(id).value="");
     drawChosen();drawNeeds();refreshEquip();drawPh("bthumbs",before);drawPh("athumbs",after);drawPh("rthumbs",receipts);refreshChips();goHome();
