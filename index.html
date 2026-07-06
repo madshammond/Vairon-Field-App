@@ -106,7 +106,7 @@ textarea{min-height:70px}
 </div>
 
 <div class="card"><h2>MATERIALS USED</h2>
-  <div class="note">Tap the coloured tag on each item to set where it came from — <b>VAN</b> stock, <b>AWM</b> / <b>MID</b>dy's / <b>TZ</b> Tradezone (account), or <b>BUN</b>nings & other (receipt needed).</div>
+  <div class="note">Tap the coloured tag on each item to set where it came from — <b>VAN</b> stock, <b>AWM</b> / <b>MID</b>dy's / <b>TZ</b> Tradezone / <b>VTX</b> Voltex (account), or <b>BUN</b>nings & other (receipt needed).</div>
   <input type="text" id="matSearch" placeholder="🔍 Search materials…" style="margin-top:8px">
   <div id="matList"></div>
   <div style="margin-top:6px"><input type="text" id="custom" placeholder="Custom item… (then tap ＋)" style="width:76%"> <button class="add" style="background:var(--blue);color:#fff;border:none;border-radius:6px;padding:10px 14px;font-weight:700" onclick="addCustom()">＋</button></div>
@@ -166,7 +166,7 @@ const JOBS=[
 const TECHS=["Will","Callum","Chris","Mads"];
 const STATUSES=["Completed","Returning — more to do","Made safe — further works req'd","Awaiting parts","Quote required"];
 const CES=["Issued","Office to issue","Not required","N/A"];
-const SOURCES=[["VAN","#555F6B"],["AWM","#1A56A0"],["MID","#6c3483"],["TZ","#148f77"],["BUN","#c0392b"]];
+const SOURCES=[["VAN","#555F6B"],["AWM","#1A56A0"],["MID","#6c3483"],["TZ","#148f77"],["VTX","#d68910"],["BUN","#c0392b"]];
 const CATALOGUE=[
  ["CBL2.5TE","TPS 2.5mm² twin & earth","m"],["CBL1.5TE","TPS 1.5mm² twin & earth","m"],
  ["CBL4TE","TPS 4mm² twin & earth","m"],["CBL6TE","TPS 6mm² twin & earth","m"],
@@ -341,7 +341,7 @@ function data(){
    hours_on_site:hoursCalc(),receipt_count:receipts.length,before_count:before.length,after_count:after.length,submitted:new Date().toISOString()};
 }
 function summary(){
-  const d=data(),srcName={VAN:"van stock",AWM:"AWM account",MID:"Middy's account",TZ:"Tradezone account",BUN:"Bunnings/other — RECEIPT"};
+  const d=data(),srcName={VAN:"van stock",AWM:"AWM account",MID:"Middy's account",TZ:"Tradezone account",VTX:"Voltex account",BUN:"Bunnings/other — RECEIPT"};
   return `VAIRON FIELD JOB CARD
 Date: ${d.date}  ·  Job: ${d.veq||"(no VEQ)"}
 Site: ${d.address}
