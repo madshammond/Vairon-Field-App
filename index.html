@@ -152,15 +152,17 @@ textarea{min-height:70px}
 
 <script>
 /* ===== JOBS_START (auto-synced from VAIRON SCHEDULING — do not edit by hand) ===== */
-const JOBS_SYNCED="Mon 6 July 2026, 12:15pm";
+const JOBS_SYNCED="Mon 6 July 2026, 9:40pm";
 const JOBS=[
- {d:"2026-07-06",when:"MON 6/7 · 7:00am",addr:"46 Central Avenue, Bayswater",veq:"",client:"Legacy job (old register)",scope:"UG cable pull + group meter panel install",crew:"Will + Chris + Mads"},
- {d:"2026-07-06",when:"MON 6/7 · TBC",addr:"110 Widford St, Glenroy",veq:"VEQ3242",client:"YPA Doreen — Tania Pitt (WO#287)",scope:"Replace heat lamp (globes blew + melted housing). Recommend Voltex VBHE-2L 3-in-1 (~$395+GST, owner approval pending). Tenant access: Rebecca (number with office)",crew:"TBC"},
- {d:"2026-07-06",when:"MON 6/7 · 4:00pm",addr:"68 Victoria Road, Narre Warren",veq:"VEQ3193",client:"Noor Rahimi — new build",scope:"PRELIM: set out + install UG conduit ahead of concrete pour (50mm HD + P20 NBN + slab earth). Full mains run scheduled later.",crew:"Mads"},
- {d:"2026-07-08",when:"WED 8/7 · 7:00am",addr:"35 Rainer Street, Pascoe Vale",veq:"VEQ3189",client:"Josie",scope:"Scope per job file — all day",crew:"Will + Chris"},
- {d:"2026-07-08",when:"WED 8/7 · 7:30am",addr:"14 Chandos Place, Atwood",veq:"VEQ3239",client:"JLB — Jarryd Baldasso",scope:"Scope TBC — 2hr provisional. Photos → VAIRON SHARED Before/After",crew:"Mads + Callum"},
- {d:"2026-07-08",when:"WED 8/7 · TBC",addr:"19 Roberts Street, Lalor",veq:"VEQ3083",client:"Charbel Asmar / Orlando",scope:"Finish off fitout works",crew:"Will + Mads"},
- {d:"2026-07-09",when:"THU 9/7 · 7:00am",addr:"9 Lookout Road, Ocean Grove",veq:"VEQ3235",client:"BCON (variation)",scope:"Garden lights — variation to existing BCON build. Allow ~1.5hr travel each way",crew:"Mads"},
+ {"d": "2026-07-07", "when": "TUE 7/7 · 7:00am", "addr": "46 Central Avenue, Bayswater", "veq": "", "client": "Legacy job (old register)", "scope": "DAY 2 — continuing UG cable pull + group meter panel install", "crew": "Will + Chris + Callum"},
+ {"d": "2026-07-07", "when": "TUE 7/7 · 10:00am TBC", "addr": "90 William Street — Rothwell Lawyers", "veq": "", "client": "Rothwell Lawyers", "scope": "On-site quote — 1hr allowance, time TBC", "crew": "Mads"},
+ {"d": "2026-07-07", "when": "TUE 7/7 · TBC", "addr": "Factory 21, Commercial Street, East Keilor", "veq": "VEQ3244", "client": "Sonja Krupic (owner)", "scope": "Site assessment — NO SMOKE ALARMS. Call tenant Melinda to book (number with office)", "crew": "Mads"},
+ {"d": "2026-07-08", "when": "WED 8/7 · 7:00am", "addr": "35 Rainer Street, Pascoe Vale", "veq": "VEQ3189", "client": "Josie", "scope": "Scope per job file — all day", "crew": "Will + Chris"},
+ {"d": "2026-07-08", "when": "WED 8/7 · 7:30am", "addr": "14 Chandos Place, Atwood", "veq": "VEQ3239", "client": "JLB — Jarryd Baldasso", "scope": "Scope TBC — 2hr provisional. Photos before/after", "crew": "Mads + Callum"},
+ {"d": "2026-07-08", "when": "WED 8/7 · TBC", "addr": "19 Roberts Street, Lalor", "veq": "VEQ3083", "client": "Charbel Asmar / Orlando", "scope": "Finish off fitout works", "crew": "Will + Mads"},
+ {"d": "2026-07-09", "when": "THU 9/7 · 7:00am", "addr": "9 Lookout Road, Ocean Grove", "veq": "VEQ3235", "client": "BCON (variation)", "scope": "Garden lights — variation to existing BCON build. ~1.5hr travel each way. NOTE: Chris on leave Thu-Mon", "crew": "Mads"},
+ {"d": "2026-07-10", "when": "FRI 10/7 · 7:00am", "addr": "6 Nepean Street, Greensborough", "veq": "VEQ3243", "client": "Electech Australia — Jason (subcontract)", "scope": "EXCAVATION ONLY — load excavator + trailer + bucket set. Electrical by Electech", "crew": "Mads"},
+ {"d": "2026-07-13", "when": "MON 13/7 · TBC", "addr": "68 Victoria Road, Narre Warren", "veq": "VEQ3193", "client": "Noor Rahimi — new build", "scope": "RETURN — full scope once go-ahead received. UG conduit prelim then mains run. Load: 50mm HD + P20 NBN conduit + bends, slab earth clamp, 6mm earth", "crew": "Mads"}
 ];
 /* ===== JOBS_END ===== */
 const TECHS=["Will","Callum","Chris","Mads"];
@@ -185,6 +187,14 @@ const CATALOGUE=[
 ];
 let chosen=[],needs=[],equip=[],before=[],after=[],receipts=[],tech=localStorage.getItem("vf_tech")||"",status="",ces="",curJob=null;
 const $=id=>document.getElementById(id);
+function sentMap(){try{return JSON.parse(localStorage.getItem("vf_sent")||"{}")}catch(e){return{}}}
+function markSent(d){
+  const m=sentMap();m[(d.veq||d.address)+"_"+d.date]=Date.now();
+  // prune entries older than 14 days
+  for(const k in m)if(Date.now()-m[k]>14*864e5)delete m[k];
+  localStorage.setItem("vf_sent",JSON.stringify(m));
+}
+function wasSent(j){return !!sentMap()[(j.veq||j.addr)+"_"+j.d];}
 function toast(t){const e=$("toast");e.textContent=t;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,2400);}
 /* ---------- home ---------- */
 function drawHome(){
@@ -193,7 +203,9 @@ function drawHome(){
   JOBS.forEach((j,i)=>{
     const d=document.createElement("div");d.className="job";
     if(j.d===today)d.style.borderLeftColor="#27ae60";
-    d.innerHTML=`<div class="top"><span class="when">${j.when}${j.d===today?" · TODAY":""}</span><span class="veq">${j.veq||"no VEQ"}</span></div>
+    const sent=wasSent(j);
+    if(sent)d.style.borderLeftColor="#27ae60";
+    d.innerHTML=`<div class="top"><span class="when">${j.when}${j.d===today?" · TODAY":""}</span>${sent?'<span class="veq" style="background:#27ae60">✅ CARD SENT</span>':""}<span class="veq">${j.veq||"no VEQ"}</span></div>
       <div class="addr">${j.addr}</div>
       <div class="meta">${j.client}</div>
       <div class="meta">👷 ${j.crew} — ${j.scope.slice(0,90)}${j.scope.length>90?"…":""}</div>`;
@@ -238,7 +250,7 @@ function drawSched(){
       h.textContent=j.when.split("·")[0].trim()+(j.d===today?"  —  TODAY":"");el.appendChild(h);}
     const mine=schedWho!=="All crew"&&j.crew.includes(schedWho);
     const d=document.createElement("div");d.className="sjob"+(mine?" mine":"");
-    d.innerHTML=`<div class="t">${(j.when.split("·")[1]||"").trim()}  ${j.veq?"· "+j.veq:""}</div>
+    d.innerHTML=`<div class="t">${(j.when.split("·")[1]||"").trim()}  ${j.veq?"· "+j.veq:""}${wasSent(j)?"  ·  ✅ CARD SENT":""}</div>
       <div class="a">${j.addr}</div>
       <div class="m">${j.client}</div>
       <div class="m">👷 ${j.crew} — ${j.scope.slice(0,110)}${j.scope.length>110?"…":""}</div>`;
@@ -392,6 +404,7 @@ async function send(){
   done();
 }
 function done(){
+  try{markSent(data());}catch(e){}
   localStorage.removeItem("vf_draft"); // sent = draft gone, always
   toast("Job card sent ✅");
   if(confirm("Clear the form for the next job?")){
