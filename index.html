@@ -91,7 +91,7 @@ textarea{min-height:70px}
   <label>Site address</label><input type="text" id="addr">
   <label>Client / builder / agency</label><input type="text" id="client">
   <label>Booked scope</label><textarea id="scope" style="min-height:44px" placeholder="(pre-filled from the booking)"></textarea>
-  <label>Tech (you)</label><div class="chips" id="techChips"></div>
+  <label>Techs on site — tap ALL who worked (senior tech fills the card)</label><div class="chips" id="techChips"></div>
   <div class="row"><div><label>Start</label><input type="time" id="tstart"></div>
   <div><label>Finish</label><input type="time" id="tfin"></div>
   <div><label>Travel (min)</label><input type="number" id="travel"></div></div>
@@ -152,17 +152,15 @@ textarea{min-height:70px}
 
 <script>
 /* ===== JOBS_START (auto-synced from VAIRON SCHEDULING — do not edit by hand) ===== */
-const JOBS_SYNCED="Mon 6 July 2026, 9:40pm";
+const JOBS_SYNCED="Tue 7 July 2026, 11:25am";
 const JOBS=[
- {"d": "2026-07-07", "when": "TUE 7/7 · 7:00am", "addr": "46 Central Avenue, Bayswater", "veq": "", "client": "Legacy job (old register)", "scope": "DAY 2 — continuing UG cable pull + group meter panel install", "crew": "Will + Chris + Callum"},
- {"d": "2026-07-07", "when": "TUE 7/7 · 10:00am TBC", "addr": "90 William Street — Rothwell Lawyers", "veq": "", "client": "Rothwell Lawyers", "scope": "On-site quote — 1hr allowance, time TBC", "crew": "Mads"},
- {"d": "2026-07-07", "when": "TUE 7/7 · TBC", "addr": "Factory 21, Commercial Street, East Keilor", "veq": "VEQ3244", "client": "Sonja Krupic (owner)", "scope": "Site assessment — NO SMOKE ALARMS. Call tenant Melinda to book (number with office)", "crew": "Mads"},
- {"d": "2026-07-08", "when": "WED 8/7 · 7:00am", "addr": "35 Rainer Street, Pascoe Vale", "veq": "VEQ3189", "client": "Josie", "scope": "Scope per job file — all day", "crew": "Will + Chris"},
- {"d": "2026-07-08", "when": "WED 8/7 · 7:30am", "addr": "14 Chandos Place, Atwood", "veq": "VEQ3239", "client": "JLB — Jarryd Baldasso", "scope": "Scope TBC — 2hr provisional. Photos before/after", "crew": "Mads + Callum"},
- {"d": "2026-07-08", "when": "WED 8/7 · TBC", "addr": "19 Roberts Street, Lalor", "veq": "VEQ3083", "client": "Charbel Asmar / Orlando", "scope": "Finish off fitout works", "crew": "Will + Mads"},
- {"d": "2026-07-09", "when": "THU 9/7 · 7:00am", "addr": "9 Lookout Road, Ocean Grove", "veq": "VEQ3235", "client": "BCON (variation)", "scope": "Garden lights — variation to existing BCON build. ~1.5hr travel each way. NOTE: Chris on leave Thu-Mon", "crew": "Mads"},
- {"d": "2026-07-10", "when": "FRI 10/7 · 7:00am", "addr": "6 Nepean Street, Greensborough", "veq": "VEQ3243", "client": "Electech Australia — Jason (subcontract)", "scope": "EXCAVATION ONLY — load excavator + trailer + bucket set. Electrical by Electech", "crew": "Mads"},
- {"d": "2026-07-13", "when": "MON 13/7 · TBC", "addr": "68 Victoria Road, Narre Warren", "veq": "VEQ3193", "client": "Noor Rahimi — new build", "scope": "RETURN — full scope once go-ahead received. UG conduit prelim then mains run. Load: 50mm HD + P20 NBN conduit + bends, slab earth clamp, 6mm earth", "crew": "Mads"}
+ {"d": "2026-07-07", "when": "TUE 7/7 · 7:00am", "addr": "46 Central Avenue, Bayswater", "veq": "", "client": "Noor Rahimi · VET3023", "scope": "DAY 2 — UG cable pull + group meter panel install / cable hauling. Callum to grab data jacks + gear from Maddison's place before site; Mads picking up materials from Site Supply.", "crew": "Will + Callum + Chris"},
+ {"d": "2026-07-07", "when": "TUE 7/7 · 10:00am TBC", "addr": "90 William Street — Rothwell Lawyers", "veq": "", "client": "Rothwell Lawyers", "scope": "On-site quote — 1hr allowance, time TBC. Raise VEQ + estimate from site notes after visit.", "crew": "Mads"},
+ {"d": "2026-07-08", "when": "WED 8/7 · 7:00am", "addr": "35 Rainer Street, Pascoe Vale", "veq": "VEQ3189", "client": "Josie", "scope": "Scope per job file — all day (allow to 3:00pm).", "crew": "Will + Chris"},
+ {"d": "2026-07-08", "when": "WED 8/7 · 7:30am", "addr": "14 Chandos Place, Atwood", "veq": "VEQ3239", "client": "JLB — Jarryd Baldasso", "scope": "Scope TBC — 2hr provisional block. Photos before/after to VAIRON SHARED.", "crew": "Mads + Callum"},
+ {"d": "2026-07-08", "when": "WED 8/7 · 12:00pm", "addr": "13/3 Allard Street, Brunswick West", "veq": "VEQ3210", "client": "McGrath Ivanhoe — Anika Scipione", "scope": "Supply & install bathroom exhaust fan + kitchen rangehood (accepted quote). Issue CES on completion. Photos before/after.", "crew": "TBC"},
+ {"d": "2026-07-09", "when": "THU 9/7 · 7:00am", "addr": "9 Lookout Road, Ocean Grove", "veq": "VEQ3235", "client": "BCON (variation)", "scope": "Garden lights — variation to existing BCON build. Allow ~1.5hr travel each way. All day. NOTE: Chris on leave Thu–Mon.", "crew": "Mads"},
+ {"d": "2026-07-10", "when": "FRI 10/7 · 7:00am", "addr": "6 Nepean Street, Greensborough", "veq": "VEQ3243", "client": "Electech Australia — Jason (subcontract)", "scope": "EXCAVATION ONLY — electrical by Electech. Load excavator + trailer + bucket set (trench + mud). Hours + machine time drive invoice.", "crew": "Mads"}
 ];
 /* ===== JOBS_END ===== */
 const TECHS=["Will","Callum","Chris","Mads"];
@@ -185,7 +183,8 @@ const CATALOGUE=[
  ["","Silicone / fire mastic","ea"],["","Wall box / mounting block","ea"],["","Cable ties (pkt)","pkt"],
  ["","Heat lamp / 3-in-1 unit","ea"],["","50mm orange HD conduit","length"],["","P20 NBN conduit","length"],
 ];
-let chosen=[],needs=[],equip=[],before=[],after=[],receipts=[],tech=localStorage.getItem("vf_tech")||"",status="",ces="",curJob=null;
+let chosen=[],needs=[],equip=[],before=[],after=[],receipts=[],techs=JSON.parse(localStorage.getItem("vf_techs")||"[]"),status="",ces="",curJob=null;
+if(!techs.length&&localStorage.getItem("vf_tech"))techs=[localStorage.getItem("vf_tech")];
 const $=id=>document.getElementById(id);
 function sentMap(){try{return JSON.parse(localStorage.getItem("vf_sent")||"{}")}catch(e){return{}}}
 function markSent(d){
@@ -262,7 +261,10 @@ function drawSched(){
 /* ---------- chips ---------- */
 function chips(el,arr,cur,cb){el.innerHTML="";arr.forEach(v=>{const d=document.createElement("div");d.className="chip"+(v===cur?" on":"");d.textContent=v;d.onclick=()=>cb(v);el.appendChild(d);});}
 function refreshChips(){
-  chips($("techChips"),TECHS,tech,v=>{tech=v;localStorage.setItem("vf_tech",v);refreshChips();});
+  (function(){const el=$("techChips");el.innerHTML="";
+  TECHS.forEach(v=>{const d=document.createElement("div");d.className="chip"+(techs.includes(v)?" on":"");d.textContent=v;
+    d.onclick=()=>{techs=techs.includes(v)?techs.filter(x=>x!==v):[...techs,v];localStorage.setItem("vf_techs",JSON.stringify(techs));refreshChips();saveDraft();};
+    el.appendChild(d);});})();
   chips($("statusChips"),STATUSES,status,v=>{status=v;refreshChips();saveDraft();});
   chips($("cesChips"),CES,ces,v=>{ces=v;refreshChips();saveDraft();});
 }
@@ -347,7 +349,7 @@ function hoursCalc(){
 }
 function data(){
   return {app:"VAIRON FIELD v2",date:$("jdate").value,veq:$("veq").value.trim(),address:$("addr").value.trim(),
-   client:$("client").value.trim(),booked_scope:$("scope").value.trim(),tech,start:$("tstart").value,finish:$("tfin").value,
+   client:$("client").value.trim(),booked_scope:$("scope").value.trim(),tech:techs.join(" + "),techs:techs,start:$("tstart").value,finish:$("tfin").value,
    travel_min:$("travel").value,work:$("workdesc").value.trim(),status,ces,further:$("further").value.trim(),
    materials:chosen,needs,equipment:equip,need_by:$("needBy").value,
    hours_on_site:hoursCalc(),receipt_count:receipts.length,before_count:before.length,after_count:after.length,submitted:new Date().toISOString()};
@@ -358,7 +360,7 @@ function summary(){
 Date: ${d.date}  ·  Job: ${d.veq||"(no VEQ)"}
 Site: ${d.address}
 Client: ${d.client}
-Tech: ${d.tech}  ·  ${d.start}–${d.finish}  ·  travel ${d.travel_min||0} min
+Techs on site: ${d.tech}  ·  ${d.start}–${d.finish}  ·  travel ${d.travel_min||0} min (applies to all listed techs)
 
 WORK COMPLETED:
 ${d.work}
@@ -374,7 +376,7 @@ ${d.equipment.length?"EQUIPMENT: "+d.equipment.join(", ")+"\n":""}${d.needs.map(
 }
 async function send(){
   const d=data();
-  if(!d.address||!d.tech||!d.work||!d.status){toast("⚠ Fill in address, tech, work & status");return;}
+  if(!d.address||!techs.length||!d.work||!d.status){toast("⚠ Fill in address, tick the techs on site, work & status");return;}
   if(chosen.some(m=>m.src==="BUN")&&!receipts.length){
     if(!confirm("You've marked Bunnings/other materials but attached no receipt. Send anyway?"))return;
   }
@@ -416,14 +418,14 @@ function done(){
 async function copySummary(){try{await navigator.clipboard.writeText(summary());toast("Summary copied 📋");}catch(e){toast("Copy failed");}}
 function saveDraft(){
   const t={};["jdate","veq","addr","client","scope","tstart","tfin","travel","workdesc","further","needBy"].forEach(id=>t[id]=$(id).value);
-  localStorage.setItem("vf_draft",JSON.stringify({t,chosen,needs,equip,tech,status,ces}));
+  localStorage.setItem("vf_draft",JSON.stringify({t,chosen,needs,equip,techs,status,ces}));
 }
 ["jdate","veq","addr","client","scope","tstart","tfin","travel","workdesc","further","needBy"].forEach(id=>$(id).addEventListener("input",saveDraft));
 function restoreDraft(){
   const d=JSON.parse(localStorage.getItem("vf_draft")||"null");if(!d)return;
   if(d.t&&(d.t.addr||d.t.workdesc)){
     for(const k in d.t)if($(k))$(k).value=d.t[k]||"";
-    chosen=d.chosen||[];needs=d.needs||[];equip=d.equip||[];status=d.status||"";ces=d.ces||"";
+    chosen=d.chosen||[];needs=d.needs||[];equip=d.equip||[];techs=d.techs||techs;status=d.status||"";ces=d.ces||"";
     openJob(null);$("hdrNote").textContent="draft restored";toast("Draft restored — unfinished job card");
   }
 }
